@@ -58,10 +58,17 @@ export const googleAuth = async (req, res) => {
 
     const token = await genToken(user._id);
 
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: false, // Change to true when deploying with HTTPS
+    //   sameSite: "strict",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000,
+    // });
+
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // Change to true when deploying with HTTPS
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -70,7 +77,6 @@ export const googleAuth = async (req, res) => {
       message: "Google Login Successful",
       user,
     });
-
   } catch (error) {
     console.error("Google Auth Error:", error);
 
@@ -84,13 +90,18 @@ export const googleAuth = async (req, res) => {
 // Logout
 export const logOut = async (req, res) => {
   try {
-    res.clearCookie("token");
+    // res.clearCookie("token");
+
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
 
     return res.status(200).json({
       success: true,
       message: "Logout Successful",
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,

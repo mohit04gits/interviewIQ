@@ -66,9 +66,6 @@
 
 // export default App;
 
-
-
-
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
@@ -83,7 +80,8 @@ import InterviewHistory from "./components/ViewHistory";
 import Layout from "./layout/Layout";
 
 // ✅ Render URL update kiya
-export const serverUrl = import.meta.env.VITE_SERVER_URL || "https://interviewiq-5zpj.onrender.com";
+export const serverUrl =
+  import.meta.env.VITE_SERVER_URL || "https://interviewiq-1-gv3j.onrender.com";
 
 function App() {
   const dispatch = useDispatch();
