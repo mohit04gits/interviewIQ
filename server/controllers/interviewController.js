@@ -493,10 +493,32 @@ export const analyzeResume = async (req, res) => {
         message: "Resume required",
       });
     }
+    
+
+// .........................................
+
+// Read uploaded PDF
+const filePath = req.file.path;
+
+console.log("========== UPLOAD DEBUG ==========");
+console.log("req.file =", req.file);
+console.log("filePath =", filePath);
+console.log("cwd =", process.cwd());
+console.log("exists =", fs.existsSync(filePath));
+console.log("==================================");
+
+const fileBuffer = await fs.promises.readFile(filePath);
+
+
+// .........................................
+
+
+
+
 
     // Read uploaded PDF
-    const filePath = req.file.path;
-    const fileBuffer = await fs.promises.readFile(filePath);
+    // const filePath = req.file.path;
+    // const fileBuffer = await fs.promises.readFile(filePath);
     const uint8Array = new Uint8Array(fileBuffer);
 
     // Load PDF
