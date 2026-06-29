@@ -81,7 +81,7 @@ import Layout from "./layout/Layout";
 
 // ✅ Render URL update kiya
 export const serverUrl =
-  import.meta.env.VITE_SERVER_URL || "https://interviewiq-1-gv3j.onrender.com";
+  import.meta.env.VITE_SERVER_URL || "http://localhost:8000";
 
 function App() {
   const dispatch = useDispatch();
