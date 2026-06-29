@@ -1,0 +1,12 @@
+# Root
+node_modules/
+
+# Server
+server/.env
+server/node_modules/
+server/uploads/
+
+# Client
+client/.env
+client/node_modules/
+client/dist/
