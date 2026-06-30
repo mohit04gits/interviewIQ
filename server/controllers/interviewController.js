@@ -493,28 +493,22 @@ export const analyzeResume = async (req, res) => {
         message: "Resume required",
       });
     }
-    
 
-// .........................................
+    // .........................................
 
-// Read uploaded PDF
-const filePath = req.file.path;
+    // Read uploaded PDF
+    const filePath = req.file.path;
 
-console.log("========== UPLOAD DEBUG ==========");
-console.log("req.file =", req.file);
-console.log("filePath =", filePath);
-console.log("cwd =", process.cwd());
-console.log("exists =", fs.existsSync(filePath));
-console.log("==================================");
+    console.log("========== UPLOAD DEBUG ==========");
+    console.log("req.file =", req.file);
+    console.log("filePath =", filePath);
+    console.log("cwd =", process.cwd());
+    console.log("exists =", fs.existsSync(filePath));
+    console.log("==================================");
 
-const fileBuffer = await fs.promises.readFile(filePath);
+    const fileBuffer = await fs.promises.readFile(filePath);
 
-
-// .........................................
-
-
-
-
+    // .........................................
 
     // Read uploaded PDF
     // const filePath = req.file.path;
@@ -572,8 +566,14 @@ Rules:
       },
     ];
 
+    //calling gemini
+    console.log("Calling Gemini...");
+
     // Gemini Response
     const aiResponse = await askAi(messages);
+
+    console.log("Gemini Response:");
+    console.log(aiResponse);
 
     // Clean Gemini response
     const cleanResponse = aiResponse
@@ -910,14 +910,50 @@ ${answer}
       },
     ];
 
+    // const aiResponse = await askAi(messages);
+
+    // const cleanResponse = aiResponse
+    //   .replace(/```json/g, "")
+    //   .replace(/```/g, "")
+    //   .trim();
+
+    // console.log("Gemini Response:");
+    // console.log(aiResponse);
+
+    // //const parsed = JSON.parse(cleanResponse);
+
+    // let parsed;
+
+    // try {
+    //   parsed = JSON.parse(cleanResponse);
+    // } catch (e) {
+    //   console.error("Invalid JSON from Gemini:");
+    //   console.log(cleanResponse);
+    //   throw e;
+    // }
+
     const aiResponse = await askAi(messages);
+
+    console.log("Gemini Response:");
+    console.log(aiResponse);
 
     const cleanResponse = aiResponse
       .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
-    const parsed = JSON.parse(cleanResponse);
+    console.log("Clean Response:");
+    console.log(cleanResponse);
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(cleanResponse);
+    } catch (e) {
+      console.error("Invalid JSON from Gemini:");
+      console.log(cleanResponse);
+      throw e;
+    }
 
     question.answer = answer;
     question.feedback = parsed.feedback;
@@ -935,14 +971,34 @@ ${answer}
       feedback: question.feedback,
       score: question.score,
     });
+    // } catch (error) {
+    //   console.error("Submit Answer Error:", error);
+
+    //   return res.status(500).json({
+    //     success: false,
+    //     message: error.message,
+    //   });
+    // }
+
+    // ...........................................
   } catch (error) {
-    console.error("Submit Answer Error:", error);
+    console.error("========== SUBMIT ANSWER ERROR ==========");
+    console.error(error);
+
+    if (error.response) {
+      console.error("Status:", error.response.status);
+      console.error("Data:", error.response.data);
+    }
+
+    console.error("========================================");
 
     return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
+
+  // .............................................
 };
 
 // ---------------------- FINISH INTERVIEW ----------------------
@@ -1003,13 +1059,22 @@ export const finishInterview = async (req, res) => {
       communication: Number(averageCommunication.toFixed(1)),
       correctness: Number(averageCorrectness.toFixed(1)),
 
+      // questionWiseScore: interview.questions.map((q) => ({
+      //   question: q.question,
+      //   score: q.score || 0,
+      //   feedback: q.feedback || "",
+      //   confidence: q.confidence || 0,
+      //   communication: q.communication || 0,
+      //   correctness: q.correctness || 0,
+      // })),
+
       questionWiseScore: interview.questions.map((q) => ({
         question: q.question,
-        score: q.score || 0,
+        score: Number((q.score || 0).toFixed(2)),
         feedback: q.feedback || "",
-        confidence: q.confidence || 0,
-        communication: q.communication || 0,
-        correctness: q.correctness || 0,
+        confidence: Number((q.confidence || 0).toFixed(2)),
+        communication: Number((q.communication || 0).toFixed(2)),
+        correctness: Number((q.correctness || 0).toFixed(2)),
       })),
     });
   } catch (error) {
@@ -1021,8 +1086,6 @@ export const finishInterview = async (req, res) => {
     });
   }
 };
-
-
 
 // ─── GET INTERVIEW HISTORY ───
 export const getInterviewHistory = async (req, res) => {
