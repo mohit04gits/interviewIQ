@@ -441,6 +441,356 @@
 
 // ......................................................................................................
 
+// import React, { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { motion, AnimatePresence } from "framer-motion";
+// import axios from "axios";
+// import { pdf } from "@react-pdf/renderer";
+// import { saveAs } from "file-saver";
+
+// // Icons
+// import {
+//   FaHistory,
+//   FaPlus,
+//   FaBrain,
+//   FaComments,
+//   FaCheckCircle,
+//   FaDownload,
+//   FaChevronDown,
+//   FaChevronUp,
+//   FaBriefcase,
+//   FaClock,
+//   FaTrophy,
+// } from "react-icons/fa";
+
+// import { serverUrl } from "../App";
+// import Navbar from "../components/Navbar";
+// // import InterviewReport from "./InterviewReport"; // We will create this below
+
+// import InterviewReportPDF from "../pdf/InterviewReportPDF";
+
+// function InterviewHistory() {
+//   const navigate = useNavigate();
+//   const [interviews, setInterviews] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [expandedId, setExpandedId] = useState(null);
+//   const [downloadingId, setDownloadingId] = useState(null);
+
+//   const fetchHistory = async () => {
+//     try {
+//       const { data } = await axios.get(serverUrl + "/api/interview/history", {
+//         withCredentials: true,
+//       });
+//       setInterviews(data.interviews || []);
+//     } catch (err) {
+//       console.error("History fetch error:", err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchHistory();
+//   }, []);
+
+//   // PDF Generation Handler
+//   const handleDownloadPDF = async (interview) => {
+//     setDownloadingId(interview._id);
+//     try {
+//       const blob = await pdf(
+//         <InterviewReportPDF interview={interview} />,
+//       ).toBlob();
+//       saveAs(
+//         blob,
+//         `InterviewIQ_Report_${interview.role.replace(/\s+/g, "_")}.pdf`,
+//       );
+//     } catch (err) {
+//       console.error("PDF Export Error:", err);
+//     } finally {
+//       setDownloadingId(null);
+//     }
+//   };
+
+//   const getScoreColor = (score) => {
+//     if (score >= 7) return "text-emerald-600";
+//     if (score >= 4) return "text-amber-500";
+//     return "text-rose-500";
+//   };
+
+//   const getScoreBg = (score) => {
+//     if (score >= 7) return "bg-emerald-50 border-emerald-100";
+//     if (score >= 4) return "bg-amber-50 border-amber-100";
+//     return "bg-rose-50 border-rose-100";
+//   };
+
+//   const formatDate = (dateStr) => {
+//     return new Date(dateStr).toLocaleDateString("en-IN", {
+//       day: "numeric",
+//       month: "short",
+//       year: "numeric",
+//       hour: "2-digit",
+//       minute: "2-digit",
+//     });
+//   };
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+//         <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
+//         <p className="text-slate-500 font-medium animate-pulse">
+//           Analyzing your progress...
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <>
+//       {/* <Navbar /> */}
+//       <div className="min-h-screen bg-white pt-6 pb-20 px-4">
+//         {" "}
+//         <div className="max-w-5xl mx-auto">
+//           {/* Header Section */}
+//           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+//             <div>
+//               <div className="flex items-center gap-3 mb-2">
+//                 <div className="p-3 bg-white shadow-sm rounded-2xl">
+//                   <FaHistory className="text-emerald-600 text-xl" />
+//                 </div>
+//                 <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
+//                   Analytics
+//                 </h1>
+//               </div>
+//               <p className="text-slate-500 text-lg ml-1">
+//                 Track your performance across {interviews.length} sessions.
+//               </p>
+//             </div>
+//             <button
+//               onClick={() => navigate("/interview")}
+//               className="flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-emerald-600 transition-all shadow-xl hover:shadow-emerald-200"
+//             >
+//               <FaPlus /> Start New Session
+//             </button>
+//           </div>
+
+//           {/* Cards Grid */}
+//           <div className="grid grid-cols-1 gap-6">
+//             {interviews.map((interview, idx) => {
+//               const isExpanded = expandedId === interview._id;
+
+//               // Helper to calculate averages safely
+//               const getAvg = (key) => {
+//                 const total = interview.questions?.reduce(
+//                   (a, q) => a + (q[key] || 0),
+//                   0,
+//                 );
+//                 return (total / (interview.questions?.length || 1)).toFixed(1);
+//               };
+
+//               return (
+//                 <motion.div
+//                   key={interview._id}
+//                   layout
+//                   initial={{ opacity: 0, y: 20 }}
+//                   animate={{ opacity: 1, y: 0 }}
+//                   className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500"
+//                 >
+//                   <div className="p-8">
+//                     <div className="flex flex-col lg:flex-row gap-8">
+//                       {/* Left: Info */}
+//                       <div className="flex-1">
+//                         <div className="flex items-center gap-3 mb-4">
+//                           <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold tracking-widest uppercase">
+//                             {interview.mode}
+//                           </span>
+//                           <span className="text-slate-300">•</span>
+//                           <span className="flex items-center gap-1.5 text-sm text-slate-400">
+//                             <FaClock className="text-xs" />{" "}
+//                             {formatDate(interview.createdAt)}
+//                           </span>
+//                         </div>
+
+//                         <h3 className="text-2xl font-black text-slate-800 capitalize mb-2">
+//                           {interview.role}
+//                         </h3>
+//                         <p className="text-slate-500 flex items-center gap-2 mb-6">
+//                           <FaBriefcase className="text-emerald-500" />{" "}
+//                           {interview.experience} Years Experience
+//                         </p>
+
+//                         {/* Progress Bar Indicators */}
+//                         <div className="grid grid-cols-3 gap-6">
+//                           {[
+//                             {
+//                               label: "Logic",
+//                               val: getAvg("confidence"),
+//                               icon: <FaBrain />,
+//                               color: "emerald",
+//                             },
+//                             {
+//                               label: "Speech",
+//                               val: getAvg("communication"),
+//                               icon: <FaComments />,
+//                               color: "blue",
+//                             },
+//                             {
+//                               label: "Accuracy",
+//                               val: getAvg("correctness"),
+//                               icon: <FaCheckCircle />,
+//                               color: "indigo",
+//                             },
+//                           ].map((stat, i) => (
+//                             <div key={i}>
+//                               <div className="flex items-center justify-between mb-2">
+//                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+//                                   {stat.label}
+//                                 </span>
+//                                 <span className="text-xs font-bold text-slate-700">
+//                                   {stat.val}/10
+//                                 </span>
+//                               </div>
+//                               <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+//                                 <motion.div
+//                                   initial={{ width: 0 }}
+//                                   animate={{ width: `${stat.val * 10}%` }}
+//                                   className={`h-full bg-${stat.color}-500 rounded-full`}
+//                                 />
+//                               </div>
+//                             </div>
+//                           ))}
+//                         </div>
+//                       </div>
+
+//                       {/* Right: Score Circular UI */}
+//                       <div className="flex flex-col items-center justify-center lg:border-l lg:border-slate-100 lg:pl-12">
+//                         <div
+//                           className={`relative w-28 h-28 flex flex-col items-center justify-center rounded-3xl border-2 ${getScoreBg(interview.finalScore)}`}
+//                         >
+//                           <span
+//                             className={`text-4xl font-black ${getScoreColor(interview.finalScore)}`}
+//                           >
+//                             {interview.finalScore}
+//                           </span>
+//                           <span className="text-[10px] font-bold text-slate-400 uppercase">
+//                             Overall
+//                           </span>
+//                         </div>
+
+//                         <div className="mt-6 flex flex-col gap-2 w-full">
+//                           <button
+//                             onClick={() => handleDownloadPDF(interview)}
+//                             disabled={downloadingId === interview._id}
+//                             className="w-full py-3 bg-blue-50 text-blue-600 rounded-xl text-sm font-bold hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2 border border-blue-100"
+//                           >
+//                             {downloadingId === interview._id ? (
+//                               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+//                             ) : (
+//                               <>
+//                                 <FaDownload /> Report
+//                               </>
+//                             )}
+//                           </button>
+//                           <button
+//                             onClick={() =>
+//                               setExpandedId(isExpanded ? null : interview._id)
+//                             }
+//                             className="w-full py-3 text-slate-500 text-sm font-bold hover:text-slate-800 transition-all flex items-center justify-center gap-2"
+//                           >
+//                             {isExpanded ? (
+//                               <>
+//                                 <FaChevronUp /> Hide
+//                               </>
+//                             ) : (
+//                               <>
+//                                 <FaChevronDown /> Details
+//                               </>
+//                             )}
+//                           </button>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   </div>
+
+//                   {/* Expanded Content */}
+//                   <AnimatePresence>
+//                     {isExpanded && (
+//                       <motion.div
+//                         initial={{ height: 0, opacity: 0 }}
+//                         animate={{ height: "auto", opacity: 1 }}
+//                         exit={{ height: 0, opacity: 0 }}
+//                         className="bg-slate-50/50 border-t border-slate-100"
+//                       >
+//                         <div className="p-8 space-y-4">
+//                           <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6">
+//                             Detailed Breakdown
+//                           </h4>
+//                           {interview.questions?.map((q, qIdx) => (
+//                             <div
+//                               key={qIdx}
+//                               className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60"
+//                             >
+//                               <div className="flex justify-between items-start gap-4 mb-4">
+//                                 <div>
+//                                   <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded uppercase mr-2">
+//                                     Q{qIdx + 1}
+//                                   </span>
+//                                   <span className="text-[10px] font-bold text-slate-400 uppercase">
+//                                     {q.difficulty}
+//                                   </span>
+//                                   <p className="mt-2 text-slate-800 font-bold leading-relaxed">
+//                                     {q.question}
+//                                   </p>
+//                                 </div>
+//                                 <div
+//                                   className={`px-3 py-1 rounded-lg font-black text-lg ${getScoreBg(q.score)} ${getScoreColor(q.score)}`}
+//                                 >
+//                                   {q.score}
+//                                 </div>
+//                               </div>
+//                               {q.feedback && (
+//                                 <div className="pl-4 border-l-2 border-emerald-200 italic text-sm text-slate-600 mb-4">
+//                                   "{q.feedback}"
+//                                 </div>
+//                               )}
+//                               <div className="flex gap-4">
+//                                 {[
+//                                   "confidence",
+//                                   "communication",
+//                                   "correctness",
+//                                 ].map((k) => (
+//                                   <div
+//                                     key={k}
+//                                     className="text-[10px] font-bold text-slate-400 uppercase"
+//                                   >
+//                                     {k}:{" "}
+//                                     <span className="text-slate-700">
+//                                       {q[k]}/10
+//                                     </span>
+//                                   </div>
+//                                 ))}
+//                               </div>
+//                             </div>
+//                           ))}
+//                         </div>
+//                       </motion.div>
+//                     )}
+//                   </AnimatePresence>
+//                 </motion.div>
+//               );
+//             })}
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+// export default InterviewHistory;
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -448,7 +798,6 @@ import axios from "axios";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 
-// Icons
 import {
   FaHistory,
   FaPlus,
@@ -460,13 +809,9 @@ import {
   FaChevronUp,
   FaBriefcase,
   FaClock,
-  FaTrophy,
 } from "react-icons/fa";
 
 import { serverUrl } from "../App";
-import Navbar from "../components/Navbar";
-// import InterviewReport from "./InterviewReport"; // We will create this below
-
 import InterviewReportPDF from "../pdf/InterviewReportPDF";
 
 function InterviewHistory() {
@@ -493,22 +838,28 @@ function InterviewHistory() {
     fetchHistory();
   }, []);
 
-  // PDF Generation Handler
   const handleDownloadPDF = async (interview) => {
     setDownloadingId(interview._id);
     try {
       const blob = await pdf(
-        <InterviewReportPDF interview={interview} />,
+        <InterviewReportPDF interview={interview} />
       ).toBlob();
       saveAs(
         blob,
-        `InterviewIQ_Report_${interview.role.replace(/\s+/g, "_")}.pdf`,
+        `InterviewIQ_Report_${interview.role.replace(/\s+/g, "_")}.pdf`
       );
     } catch (err) {
       console.error("PDF Export Error:", err);
     } finally {
       setDownloadingId(null);
     }
+  };
+
+  // ✅ Helper — har jagah safe rounded number deta hai
+  const round = (val) => {
+    const num = Number(val);
+    if (isNaN(num)) return "0.0";
+    return num.toFixed(1);
   };
 
   const getScoreColor = (score) => {
@@ -523,6 +874,12 @@ function InterviewHistory() {
     return "bg-rose-50 border-rose-100";
   };
 
+  const getBarColor = (score) => {
+    if (score >= 7) return "bg-emerald-500";
+    if (score >= 4) return "bg-amber-500";
+    return "bg-rose-500";
+  };
+
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-IN", {
       day: "numeric",
@@ -535,9 +892,9 @@ function InterviewHistory() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 via-white to-emerald-50/30">
         <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-slate-500 font-medium animate-pulse">
+        <p className="text-gray-500 font-medium animate-pulse">
           Analyzing your progress...
         </p>
       </div>
@@ -545,47 +902,71 @@ function InterviewHistory() {
   }
 
   return (
-    <>
-      {/* <Navbar /> */}
-      <div className="min-h-screen bg-white pt-6 pb-20 px-4">
-        {" "}
-        <div className="max-w-5xl mx-auto">
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-3 bg-white shadow-sm rounded-2xl">
-                  <FaHistory className="text-emerald-600 text-xl" />
-                </div>
-                <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
-                  Analytics
-                </h1>
+    <div className="min-h-screen bg-gradient-to-b from-white via-white to-emerald-50/30 pt-8 pb-20 px-4">
+      <div className="max-w-5xl mx-auto">
+
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-3 bg-white border border-gray-100 shadow-sm rounded-2xl">
+                <FaHistory className="text-emerald-600 text-xl" />
               </div>
-              <p className="text-slate-500 text-lg ml-1">
-                Track your performance across {interviews.length} sessions.
-              </p>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+                Analytics
+              </h1>
             </div>
+            <p className="text-gray-500 text-base md:text-lg ml-1">
+              Track your performance across {interviews.length} session{interviews.length !== 1 ? "s" : ""}.
+            </p>
+          </div>
+          <button
+            onClick={() => navigate("/interview")}
+            className="flex items-center justify-center gap-2 px-7 py-3.5 bg-gradient-to-r from-gray-900 to-black text-white rounded-2xl font-bold shadow-lg shadow-gray-900/15 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
+          >
+            <FaPlus size={14} /> Start New Session
+          </button>
+        </div>
+
+        {/* Empty State */}
+        {interviews.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white border border-gray-100 rounded-[2rem] shadow-sm p-16 text-center"
+          >
+            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <FaHistory className="text-3xl text-emerald-300" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-700 mb-2">
+              No Interviews Yet
+            </h2>
+            <p className="text-gray-400 max-w-sm mx-auto mb-7">
+              Start your first AI-powered mock interview and track your
+              progress right here.
+            </p>
             <button
               onClick={() => navigate("/interview")}
-              className="flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-emerald-600 transition-all shadow-xl hover:shadow-emerald-200"
+              className="px-7 py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 hover:shadow-xl transition-shadow"
             >
-              <FaPlus /> Start New Session
+              Start Your First Interview 🚀
             </button>
-          </div>
-
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 gap-6">
+          </motion.div>
+        ) : (
+          /* Cards Grid */
+          <div className="grid grid-cols-1 gap-5">
             {interviews.map((interview, idx) => {
               const isExpanded = expandedId === interview._id;
 
-              // Helper to calculate averages safely
               const getAvg = (key) => {
                 const total = interview.questions?.reduce(
                   (a, q) => a + (q[key] || 0),
-                  0,
+                  0
                 );
-                return (total / (interview.questions?.length || 1)).toFixed(1);
+                return round(total / (interview.questions?.length || 1));
               };
+
+              const finalScore = round(interview.finalScore);
 
               return (
                 <motion.div
@@ -593,67 +974,55 @@ function InterviewHistory() {
                   layout
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500"
+                  transition={{ delay: idx * 0.05 }}
+                  className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden shadow-sm shadow-gray-900/[0.02] hover:shadow-xl hover:border-emerald-100 transition-all duration-300"
                 >
-                  <div className="p-8">
+                  <div className="p-6 md:p-8">
                     <div className="flex flex-col lg:flex-row gap-8">
+
                       {/* Left: Info */}
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-4">
-                          <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold tracking-widest uppercase">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-4 flex-wrap">
+                          <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-[10px] font-bold tracking-widest uppercase">
                             {interview.mode}
                           </span>
-                          <span className="text-slate-300">•</span>
-                          <span className="flex items-center gap-1.5 text-sm text-slate-400">
-                            <FaClock className="text-xs" />{" "}
+                          <span className="text-gray-300">•</span>
+                          <span className="flex items-center gap-1.5 text-sm text-gray-400">
+                            <FaClock className="text-xs" />
                             {formatDate(interview.createdAt)}
                           </span>
                         </div>
 
-                        <h3 className="text-2xl font-black text-slate-800 capitalize mb-2">
+                        <h3 className="text-xl md:text-2xl font-black text-gray-900 capitalize mb-1.5 truncate">
                           {interview.role}
                         </h3>
-                        <p className="text-slate-500 flex items-center gap-2 mb-6">
-                          <FaBriefcase className="text-emerald-500" />{" "}
+                        <p className="text-gray-500 flex items-center gap-2 mb-6 text-sm">
+                          <FaBriefcase className="text-emerald-500" />
                           {interview.experience} Years Experience
                         </p>
 
-                        {/* Progress Bar Indicators */}
-                        <div className="grid grid-cols-3 gap-6">
+                        {/* Progress Bars */}
+                        <div className="grid grid-cols-3 gap-5 md:gap-6">
                           {[
-                            {
-                              label: "Logic",
-                              val: getAvg("confidence"),
-                              icon: <FaBrain />,
-                              color: "emerald",
-                            },
-                            {
-                              label: "Speech",
-                              val: getAvg("communication"),
-                              icon: <FaComments />,
-                              color: "blue",
-                            },
-                            {
-                              label: "Accuracy",
-                              val: getAvg("correctness"),
-                              icon: <FaCheckCircle />,
-                              color: "indigo",
-                            },
+                            { label: "Logic", val: getAvg("confidence"), icon: <FaBrain /> },
+                            { label: "Speech", val: getAvg("communication"), icon: <FaComments /> },
+                            { label: "Accuracy", val: getAvg("correctness"), icon: <FaCheckCircle /> },
                           ].map((stat, i) => (
                             <div key={i}>
                               <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                  {stat.label}
+                                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
+                                  {stat.icon} {stat.label}
                                 </span>
-                                <span className="text-xs font-bold text-slate-700">
+                                <span className="text-xs font-bold text-gray-700">
                                   {stat.val}/10
                                 </span>
                               </div>
-                              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                                 <motion.div
                                   initial={{ width: 0 }}
                                   animate={{ width: `${stat.val * 10}%` }}
-                                  className={`h-full bg-${stat.color}-500 rounded-full`}
+                                  transition={{ duration: 0.6, delay: 0.1 }}
+                                  className={`h-full rounded-full ${getBarColor(stat.val)}`}
                                 />
                               </div>
                             </div>
@@ -661,32 +1030,30 @@ function InterviewHistory() {
                         </div>
                       </div>
 
-                      {/* Right: Score Circular UI */}
-                      <div className="flex flex-col items-center justify-center lg:border-l lg:border-slate-100 lg:pl-12">
+                      {/* Right: Score + Actions */}
+                      <div className="flex flex-row lg:flex-col items-center justify-between lg:justify-center gap-6 lg:gap-0 lg:border-l lg:border-gray-100 lg:pl-10 shrink-0">
                         <div
-                          className={`relative w-28 h-28 flex flex-col items-center justify-center rounded-3xl border-2 ${getScoreBg(interview.finalScore)}`}
+                          className={`relative w-24 h-24 lg:w-28 lg:h-28 flex flex-col items-center justify-center rounded-3xl border-2 ${getScoreBg(finalScore)}`}
                         >
-                          <span
-                            className={`text-4xl font-black ${getScoreColor(interview.finalScore)}`}
-                          >
-                            {interview.finalScore}
+                          <span className={`text-3xl lg:text-4xl font-black ${getScoreColor(finalScore)}`}>
+                            {finalScore}
                           </span>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">
+                          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">
                             Overall
                           </span>
                         </div>
 
-                        <div className="mt-6 flex flex-col gap-2 w-full">
+                        <div className="flex lg:flex-col gap-2 lg:w-full lg:mt-6">
                           <button
                             onClick={() => handleDownloadPDF(interview)}
                             disabled={downloadingId === interview._id}
-                            className="w-full py-3 bg-blue-50 text-blue-600 rounded-xl text-sm font-bold hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2 border border-blue-100"
+                            className="px-4 lg:w-full py-2.5 lg:py-3 bg-blue-50 text-blue-600 rounded-xl text-sm font-bold hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2 border border-blue-100"
                           >
                             {downloadingId === interview._id ? (
                               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                             ) : (
                               <>
-                                <FaDownload /> Report
+                                <FaDownload size={13} /> Report
                               </>
                             )}
                           </button>
@@ -694,15 +1061,15 @@ function InterviewHistory() {
                             onClick={() =>
                               setExpandedId(isExpanded ? null : interview._id)
                             }
-                            className="w-full py-3 text-slate-500 text-sm font-bold hover:text-slate-800 transition-all flex items-center justify-center gap-2"
+                            className="px-4 lg:w-full py-2.5 lg:py-3 text-gray-500 text-sm font-bold hover:text-gray-800 transition-colors flex items-center justify-center gap-2"
                           >
                             {isExpanded ? (
                               <>
-                                <FaChevronUp /> Hide
+                                <FaChevronUp size={12} /> Hide
                               </>
                             ) : (
                               <>
-                                <FaChevronDown /> Details
+                                <FaChevronDown size={12} /> Details
                               </>
                             )}
                           </button>
@@ -718,59 +1085,63 @@ function InterviewHistory() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="bg-slate-50/50 border-t border-slate-100"
+                        transition={{ duration: 0.3 }}
+                        className="bg-gray-50/60 border-t border-gray-100"
                       >
-                        <div className="p-8 space-y-4">
-                          <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6">
+                        <div className="p-6 md:p-8 space-y-3">
+                          <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-5">
                             Detailed Breakdown
                           </h4>
-                          {interview.questions?.map((q, qIdx) => (
-                            <div
-                              key={qIdx}
-                              className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/60"
-                            >
-                              <div className="flex justify-between items-start gap-4 mb-4">
-                                <div>
-                                  <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded uppercase mr-2">
-                                    Q{qIdx + 1}
-                                  </span>
-                                  <span className="text-[10px] font-bold text-slate-400 uppercase">
-                                    {q.difficulty}
-                                  </span>
-                                  <p className="mt-2 text-slate-800 font-bold leading-relaxed">
-                                    {q.question}
-                                  </p>
-                                </div>
-                                <div
-                                  className={`px-3 py-1 rounded-lg font-black text-lg ${getScoreBg(q.score)} ${getScoreColor(q.score)}`}
-                                >
-                                  {q.score}
-                                </div>
-                              </div>
-                              {q.feedback && (
-                                <div className="pl-4 border-l-2 border-emerald-200 italic text-sm text-slate-600 mb-4">
-                                  "{q.feedback}"
-                                </div>
-                              )}
-                              <div className="flex gap-4">
-                                {[
-                                  "confidence",
-                                  "communication",
-                                  "correctness",
-                                ].map((k) => (
-                                  <div
-                                    key={k}
-                                    className="text-[10px] font-bold text-slate-400 uppercase"
-                                  >
-                                    {k}:{" "}
-                                    <span className="text-slate-700">
-                                      {q[k]}/10
-                                    </span>
+                          {interview.questions?.map((q, qIdx) => {
+                            const qScore = round(q.score);
+                            return (
+                              <div
+                                key={qIdx}
+                                className="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-gray-100"
+                              >
+                                <div className="flex justify-between items-start gap-4 mb-3">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full uppercase border border-emerald-100">
+                                        Q{qIdx + 1}
+                                      </span>
+                                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">
+                                        {q.difficulty}
+                                      </span>
+                                    </div>
+                                    <p className="text-gray-800 font-bold leading-relaxed text-sm">
+                                      {q.question}
+                                    </p>
                                   </div>
-                                ))}
+                                  <div
+                                    className={`shrink-0 px-3 py-1.5 rounded-xl font-black text-base ${getScoreBg(qScore)} ${getScoreColor(qScore)}`}
+                                  >
+                                    {qScore}
+                                  </div>
+                                </div>
+
+                                {q.feedback && (
+                                  <div className="pl-4 border-l-2 border-emerald-300 italic text-sm text-gray-600 mb-4 leading-relaxed">
+                                    "{q.feedback}"
+                                  </div>
+                                )}
+
+                                <div className="flex gap-4 flex-wrap">
+                                  {["confidence", "communication", "correctness"].map((k) => (
+                                    <div
+                                      key={k}
+                                      className="text-[10px] font-bold text-gray-400 uppercase tracking-wide"
+                                    >
+                                      {k}:{" "}
+                                      <span className="text-gray-700">
+                                        {round(q[k])}/10
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </motion.div>
                     )}
@@ -779,9 +1150,9 @@ function InterviewHistory() {
               );
             })}
           </div>
-        </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }
 

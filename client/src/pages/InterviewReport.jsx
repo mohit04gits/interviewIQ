@@ -558,9 +558,191 @@
 
 
 
+// import React, { useState } from "react";
+// import { useLocation, useNavigate } from "react-router-dom";
+// import { motion } from "framer-motion"; // Note: Use 'framer-motion'
+// import { pdf } from "@react-pdf/renderer";
+// import { saveAs } from "file-saver";
+// import {
+//   FaTrophy, FaBrain, FaComments, FaCheckCircle, 
+//   FaRedo, FaHome, FaDownload, FaChartLine
+// } from "react-icons/fa";
+
+// import InterviewReportPDF from "../pdf/InterviewReportPDF";
+
+// function InterviewReport() {
+//   const location = useLocation();
+//   const navigate = useNavigate();
+//   const [isGenerating, setIsGenerating] = useState(false);
+
+//   const report = location.state?.report;
+
+//   if (!report) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+//         <h2 className="text-2xl font-bold text-slate-800">No Report Found</h2>
+//         <button onClick={() => navigate("/")} className="mt-4 px-8 py-3 bg-emerald-600 text-white rounded-2xl font-bold">
+//           Go Home
+//         </button>
+//       </div>
+//     );
+//   }
+
+//   const { finalScore = 0, confidence = 0, communication = 0, correctness = 0, questionWiseScore = [] } = report;
+
+//   const handleDownloadPDF = async () => {
+//     setIsGenerating(true);
+//     try {
+//       const blob = await pdf(<InterviewReportPDF report={report} />).toBlob();
+//       saveAs(blob, `InterviewIQ_Report_${Date.now()}.pdf`);
+//     } catch (err) {
+//       console.error("PDF Export Error:", err);
+//     } finally {
+//       setIsGenerating(false);
+//     }
+//   };
+
+//   const getScoreColor = (score) => {
+//     if (score >= 7) return "text-emerald-600";
+//     if (score >= 4) return "text-amber-500";
+//     return "text-rose-500";
+//   };
+
+//   const getBarColor = (score) => {
+//     if (score >= 7) return "bg-emerald-500";
+//     if (score >= 4) return "bg-amber-500";
+//     return "bg-rose-500";
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-[#F8FAFC] pb-20">
+//       {/* Hero Stats */}
+//       <div className="bg-white border-b border-slate-200 pt-16 pb-12 px-4 shadow-sm">
+//         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-12">
+//           {/* Main Circular Score */}
+//           <motion.div 
+//             initial={{ scale: 0.8, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             className="relative flex items-center justify-center"
+//           >
+//             <div className={`w-48 h-48 rounded-[3rem] border-8 flex flex-col items-center justify-center bg-white shadow-2xl shadow-emerald-100 ${finalScore >= 7 ? 'border-emerald-100' : 'border-rose-100'}`}>
+//               <FaTrophy className={`text-2xl mb-1 ${getScoreColor(finalScore)}`} />
+//               <div className={`text-6xl font-black ${getScoreColor(finalScore)}`}>{finalScore}</div>
+//               <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Overall Score</div>
+//             </div>
+//           </motion.div>
+
+//           <div className="flex-1 space-y-6">
+//             <div>
+//               <h1 className="text-4xl font-black text-slate-900 leading-tight">Assessment Complete.</h1>
+//               <p className="text-slate-500 text-lg">Great job! You've successfully finished your mock interview.</p>
+//             </div>
+            
+//             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+//               {[
+//                 { label: "Confidence", val: confidence, icon: <FaBrain />, color: 'emerald' },
+//                 { label: "Communication", val: communication, icon: <FaComments />, color: 'blue' },
+//                 { label: "Accuracy", val: correctness, icon: <FaCheckCircle />, color: 'indigo' },
+//               ].map((stat, i) => (
+//                 <div key={i} className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+//                   <div className="flex items-center justify-between mb-2">
+//                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stat.label}</span>
+//                     <span className={`text-xs font-bold ${getScoreColor(stat.val)}`}>{stat.val}/10</span>
+//                   </div>
+//                   <div className="h-1.5 w-full bg-white rounded-full overflow-hidden border border-slate-200">
+//                     <motion.div 
+//                       initial={{ width: 0 }}
+//                       animate={{ width: `${stat.val * 10}%` }}
+//                       className={`h-full ${getBarColor(stat.val)}`}
+//                     />
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Main Content */}
+//       <div className="max-w-4xl mx-auto mt-12 px-4 space-y-8">
+        
+//         {/* Action Buttons Section */}
+//         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+//           <button
+//             onClick={handleDownloadPDF}
+//             disabled={isGenerating}
+//             className="h-14 bg-slate-900 text-white rounded-2xl font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 shadow-xl shadow-slate-200"
+//           >
+//             {isGenerating ? (
+//               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+//             ) : (
+//               <><FaDownload /> Download Report</>
+//             )}
+//           </button>
+//           <button onClick={() => navigate("/interview")} className="h-14 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:bg-slate-50 transition flex items-center justify-center gap-3">
+//             <FaRedo /> Try Again
+//           </button>
+//           <button onClick={() => navigate("/")} className="h-14 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:bg-slate-50 transition flex items-center justify-center gap-3">
+//             <FaHome /> Dashboard
+//           </button>
+//         </div>
+
+//         {/* Detailed List */}
+//         <div className="space-y-4">
+//           <div className="flex items-center gap-2 px-2">
+//             <FaChartLine className="text-emerald-500" />
+//             <h2 className="text-xl font-black text-slate-800">Question-wise Breakdown</h2>
+//           </div>
+
+//           {questionWiseScore.map((q, idx) => (
+//             <motion.div
+//               key={idx}
+//               initial={{ opacity: 0, y: 10 }}
+//               animate={{ opacity: 1, y: 0 }}
+//               transition={{ delay: 0.2 + (idx * 0.1) }}
+//               className="bg-white border border-slate-200 p-8 rounded-3xl hover:border-emerald-200 transition-all group"
+//             >
+//               <div className="flex justify-between items-start gap-6">
+//                 <div className="flex-1">
+//                   <div className="flex items-center gap-2 mb-3">
+//                     <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+//                       Question {idx + 1}
+//                     </span>
+//                   </div>
+//                   <p className="text-lg font-bold text-slate-800 leading-relaxed">{q.question}</p>
+//                 </div>
+//                 <div className={`w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-black text-xl shadow-inner ${q.score >= 7 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+//                   {q.score}
+//                   <span className="text-[8px] text-slate-400 font-bold -mt-1 uppercase">Score</span>
+//                 </div>
+//               </div>
+
+//               {q.feedback && (
+//                 <div className="mt-6 p-5 bg-slate-50 rounded-2xl border-l-4 border-emerald-400 italic text-sm text-slate-600">
+//                   "{q.feedback}"
+//                 </div>
+//               )}
+//             </motion.div>
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default InterviewReport;
+
+
+//............................................................................................................
+
+
+
+
+
+
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion"; // Note: Use 'framer-motion'
+import { motion } from "framer-motion";
 import { pdf } from "@react-pdf/renderer";
 import { saveAs } from "file-saver";
 import {
@@ -579,9 +761,9 @@ function InterviewReport() {
 
   if (!report) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 via-white to-emerald-50/30">
         <h2 className="text-2xl font-bold text-slate-800">No Report Found</h2>
-        <button onClick={() => navigate("/")} className="mt-4 px-8 py-3 bg-emerald-600 text-white rounded-2xl font-bold">
+        <button onClick={() => navigate("/")} className="mt-4 px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 hover:shadow-xl transition-shadow">
           Go Home
         </button>
       </div>
@@ -615,45 +797,49 @@ function InterviewReport() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-white via-white to-emerald-50/30 pb-20">
       {/* Hero Stats */}
-      <div className="bg-white border-b border-slate-200 pt-16 pb-12 px-4 shadow-sm">
+      <div className="bg-white border-b border-gray-100 pt-14 pb-12 px-4 shadow-sm shadow-gray-900/[0.02]">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-12">
           {/* Main Circular Score */}
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="relative flex items-center justify-center"
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="relative flex items-center justify-center shrink-0"
           >
-            <div className={`w-48 h-48 rounded-[3rem] border-8 flex flex-col items-center justify-center bg-white shadow-2xl shadow-emerald-100 ${finalScore >= 7 ? 'border-emerald-100' : 'border-rose-100'}`}>
-              <FaTrophy className={`text-2xl mb-1 ${getScoreColor(finalScore)}`} />
-              <div className={`text-6xl font-black ${getScoreColor(finalScore)}`}>{finalScore}</div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Overall Score</div>
+            <div className={`w-48 h-48 rounded-[2.5rem] border-[6px] flex flex-col items-center justify-center bg-white shadow-2xl ${finalScore >= 7 ? 'border-emerald-100 shadow-emerald-100/60' : 'border-rose-100 shadow-rose-100/60'}`}>
+              <FaTrophy className={`text-2xl mb-1.5 ${getScoreColor(finalScore)}`} />
+              <div className={`text-6xl font-black tracking-tight ${getScoreColor(finalScore)}`}>{finalScore}</div>
+              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Overall Score</div>
             </div>
           </motion.div>
 
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-6 text-center md:text-left">
             <div>
-              <h1 className="text-4xl font-black text-slate-900 leading-tight">Assessment Complete.</h1>
-              <p className="text-slate-500 text-lg">Great job! You've successfully finished your mock interview.</p>
+              <h1 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight tracking-tight">Assessment Complete.</h1>
+              <p className="text-gray-500 text-lg mt-1.5">Great job! You've successfully finished your mock interview.</p>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
-                { label: "Confidence", val: confidence, icon: <FaBrain />, color: 'emerald' },
-                { label: "Communication", val: communication, icon: <FaComments />, color: 'blue' },
-                { label: "Accuracy", val: correctness, icon: <FaCheckCircle />, color: 'indigo' },
+                { label: "Confidence", val: confidence, icon: <FaBrain /> },
+                { label: "Communication", val: communication, icon: <FaComments /> },
+                { label: "Accuracy", val: correctness, icon: <FaCheckCircle /> },
               ].map((stat, i) => (
-                <div key={i} className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stat.label}</span>
+                <div key={i} className="bg-gray-50/80 p-4 rounded-2xl border border-gray-100">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                      {stat.icon} {stat.label}
+                    </span>
                     <span className={`text-xs font-bold ${getScoreColor(stat.val)}`}>{stat.val}/10</span>
                   </div>
-                  <div className="h-1.5 w-full bg-white rounded-full overflow-hidden border border-slate-200">
+                  <div className="h-1.5 w-full bg-white rounded-full overflow-hidden border border-gray-200">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${stat.val * 10}%` }}
-                      className={`h-full ${getBarColor(stat.val)}`}
+                      transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                      className={`h-full rounded-full ${getBarColor(stat.val)}`}
                     />
                   </div>
                 </div>
@@ -664,61 +850,61 @@ function InterviewReport() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto mt-12 px-4 space-y-8">
+      <div className="max-w-4xl mx-auto mt-10 px-4 space-y-8">
         
         {/* Action Buttons Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button
             onClick={handleDownloadPDF}
             disabled={isGenerating}
-            className="h-14 bg-slate-900 text-white rounded-2xl font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 shadow-xl shadow-slate-200"
+            className="h-14 bg-gradient-to-r from-gray-900 to-black text-white rounded-2xl font-bold hover:shadow-xl shadow-lg shadow-gray-900/15 transition-all flex items-center justify-center gap-3 disabled:opacity-70"
           >
             {isGenerating ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <><FaDownload /> Download Report</>
+              <><FaDownload size={15} /> Download Report</>
             )}
           </button>
-          <button onClick={() => navigate("/interview")} className="h-14 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:bg-slate-50 transition flex items-center justify-center gap-3">
-            <FaRedo /> Try Again
+          <button onClick={() => navigate("/interview")} className="h-14 bg-white border border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-3">
+            <FaRedo size={14} /> Try Again
           </button>
-          <button onClick={() => navigate("/")} className="h-14 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:bg-slate-50 transition flex items-center justify-center gap-3">
-            <FaHome /> Dashboard
+          <button onClick={() => navigate("/")} className="h-14 bg-white border border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-3">
+            <FaHome size={15} /> Dashboard
           </button>
         </div>
 
         {/* Detailed List */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 px-2">
+          <div className="flex items-center gap-2.5 px-1">
             <FaChartLine className="text-emerald-500" />
-            <h2 className="text-xl font-black text-slate-800">Question-wise Breakdown</h2>
+            <h2 className="text-xl font-black text-gray-900 tracking-tight">Question-wise Breakdown</h2>
           </div>
 
           {questionWiseScore.map((q, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + (idx * 0.1) }}
-              className="bg-white border border-slate-200 p-8 rounded-3xl hover:border-emerald-200 transition-all group"
+              transition={{ delay: 0.1 + (idx * 0.08), duration: 0.4 }}
+              className="bg-white border border-gray-100 p-7 sm:p-8 rounded-3xl shadow-sm shadow-gray-900/[0.02] hover:shadow-lg hover:border-emerald-100 transition-all duration-300"
             >
               <div className="flex justify-between items-start gap-6">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                    <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-100">
                       Question {idx + 1}
                     </span>
                   </div>
-                  <p className="text-lg font-bold text-slate-800 leading-relaxed">{q.question}</p>
+                  <p className="text-lg font-bold text-gray-900 leading-relaxed">{q.question}</p>
                 </div>
-                <div className={`w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-black text-xl shadow-inner ${q.score >= 7 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                <div className={`shrink-0 w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-black text-xl shadow-inner ${q.score >= 7 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
                   {q.score}
-                  <span className="text-[8px] text-slate-400 font-bold -mt-1 uppercase">Score</span>
+                  <span className="text-[8px] text-gray-400 font-bold -mt-1 uppercase">Score</span>
                 </div>
               </div>
 
               {q.feedback && (
-                <div className="mt-6 p-5 bg-slate-50 rounded-2xl border-l-4 border-emerald-400 italic text-sm text-slate-600">
+                <div className="mt-5 p-5 bg-gray-50/80 rounded-2xl border-l-4 border-emerald-400 italic text-sm text-gray-600 leading-relaxed">
                   "{q.feedback}"
                 </div>
               )}
