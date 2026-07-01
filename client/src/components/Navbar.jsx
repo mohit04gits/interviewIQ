@@ -222,6 +222,44 @@ function Navbar() {
     }
   };
 
+  //BUY CREDIT FUNCTION
+//   const handleBuyCredits = async () => {
+//   try {
+//     const { data } = await axios.post(
+//       `${serverUrl}/api/payment/create-order`,
+//       {
+//         amount: 99,
+//       },
+//       {
+//         withCredentials: true,
+//       }
+//     );
+
+//     const options = {
+//       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+//       amount: data.order.amount,
+//       currency: data.order.currency,
+//       name: "InterviewIQ",
+//       description: "Interview Credits",
+//       order_id: data.order.id,
+
+//       handler: function (response) {
+//         console.log(response);
+//         alert("Payment Successful");
+//       },
+
+//       theme: {
+//         color: "#10B981",
+//       },
+//     };
+
+//     const razorpay = new window.Razorpay(options);
+//     razorpay.open();
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
   return (
     <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl flex justify-center px-4 sm:px-6 py-3 border-b border-gray-100/80">
       <motion.div
@@ -287,7 +325,8 @@ function Navbar() {
                 </p>
 
                 <button
-                  onClick={() => navigate("/pricing")}
+                   onClick={() => navigate("/pricing")}
+                  // onClick={handleBuyCredits}
                   className="w-full mt-5 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white py-3 rounded-2xl font-semibold
                     transition-all duration-300 hover:shadow-lg hover:shadow-emerald-200 hover:scale-[1.02]
                     active:scale-95"

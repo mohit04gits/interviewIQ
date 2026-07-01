@@ -127,7 +127,7 @@
 //               🚀 Start Interview
 //             </button>
 
-//             <button 
+//             <button
 //              onClick={() => navigate("/history")}
 //             className="px-8 py-4 rounded-2xl bg-white border border-gray-300 font-semibold hover:border-green-500 hover:text-green-600 transition">
 //               View History
@@ -300,21 +300,6 @@
 
 // export default Home;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React from "react";
 import { useSelector } from "react-redux";
 import { motion } from "motion/react";
@@ -329,9 +314,31 @@ import resume from "../assets/resume.png";
 import tech from "../assets/tech.png";
 import { useNavigate } from "react-router-dom";
 
+import { useState } from "react";
+import AuthModel from "../components/AuthModel";
+
 function Home() {
   const { userData } = useSelector((state) => state.user);
   const navigate = useNavigate();
+
+  const [showAuth, setShowAuth] = useState(false);
+  const handleStartInterview = () => {
+    if (!userData) {
+      setShowAuth(true);
+      return;
+    }
+
+    navigate("/interview");
+  };
+
+  const handleHistory = () => {
+    if (!userData) {
+      setShowAuth(true);
+      return;
+    }
+
+    navigate("/history");
+  };
 
   const interviewModes = [
     {
@@ -430,14 +437,17 @@ function Home() {
             className="flex gap-4 mt-11 flex-wrap justify-center"
           >
             <button
-              onClick={() => navigate("/interview")}
+              // onClick={() => navigate("/interview")}
+              onClick={handleStartInterview}
               className="px-8 py-4 rounded-2xl bg-gradient-to-r from-gray-900 to-black text-white font-semibold shadow-xl shadow-gray-900/15 hover:shadow-2xl hover:scale-[1.03] active:scale-95 transition-all duration-300"
             >
               🚀 Start Interview
             </button>
 
             <button
-              onClick={() => navigate("/history")}
+              // onClick={() => navigate("/history")}
+
+              onClick={handleHistory}
               className="px-8 py-4 rounded-2xl bg-white border border-gray-200 font-semibold text-gray-700 hover:border-emerald-400 hover:text-emerald-600 hover:shadow-md transition-all duration-300"
             >
               View History
@@ -455,8 +465,12 @@ function Home() {
                 <BsRobot className="text-3xl text-emerald-500" />
               </div>
 
-              <p className="text-emerald-500 text-xs font-bold tracking-widest mt-9">STEP 1</p>
-              <h3 className="mt-3 text-2xl font-bold text-gray-900">Role & Experience</h3>
+              <p className="text-emerald-500 text-xs font-bold tracking-widest mt-9">
+                STEP 1
+              </p>
+              <h3 className="mt-3 text-2xl font-bold text-gray-900">
+                Role & Experience
+              </h3>
               <p className="mt-4 text-gray-500 leading-7">
                 AI automatically adjusts the interview according to your
                 selected role and experience.
@@ -472,8 +486,12 @@ function Home() {
                 <BsMic className="text-3xl text-emerald-500" />
               </div>
 
-              <p className="text-emerald-500 text-xs font-bold tracking-widest mt-9">STEP 2</p>
-              <h3 className="mt-3 text-2xl font-bold text-gray-900">Smart Voice Interview</h3>
+              <p className="text-emerald-500 text-xs font-bold tracking-widest mt-9">
+                STEP 2
+              </p>
+              <h3 className="mt-3 text-2xl font-bold text-gray-900">
+                Smart Voice Interview
+              </h3>
               <p className="mt-4 text-gray-500 leading-7">
                 Dynamic follow-up questions generated from your answers just
                 like a real interviewer.
@@ -489,8 +507,12 @@ function Home() {
                 <BsClock className="text-3xl text-emerald-500" />
               </div>
 
-              <p className="text-emerald-500 text-xs font-bold tracking-widest mt-9">STEP 3</p>
-              <h3 className="mt-3 text-2xl font-bold text-gray-900">Timed Simulation</h3>
+              <p className="text-emerald-500 text-xs font-bold tracking-widest mt-9">
+                STEP 3
+              </p>
+              <h3 className="mt-3 text-2xl font-bold text-gray-900">
+                Timed Simulation
+              </h3>
               <p className="mt-4 text-gray-500 leading-7">
                 Experience real interview pressure with countdown timer and
                 instant AI evaluation.
@@ -597,6 +619,8 @@ function Home() {
           </div>
         </div>
       </section>
+      {/* // Fix: Show authentication popup for protected actions */}
+      {showAuth && <AuthModel onClose={() => setShowAuth(false)} />}
     </div>
   );
 }

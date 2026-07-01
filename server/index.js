@@ -1,12 +1,23 @@
+// import express from "express";
+// import dotenv from "dotenv";
+// import connectDb from "./config/connectDb.js";
+// import cookieParser from "cookie-parser";
+// import cors from "cors";
+// import authRouter from "./routes/authRoute.js";
+// import userRouter from "./routes/userRoute.js";
+// import interviewRouter from "./routes/interViewRoute.js";
+// import paymentRouter from "./routes/paymentRoutes.js";
+// dotenv.config();
+
+import "dotenv/config";
 import express from "express";
-import dotenv from "dotenv";
 import connectDb from "./config/connectDb.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import authRouter from "./routes/authRoute.js";
 import userRouter from "./routes/userRoute.js";
 import interviewRouter from "./routes/interViewRoute.js";
-dotenv.config();
+import paymentRouter from "./routes/paymentRoutes.js";
 
 const app = express();
 
@@ -29,6 +40,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 
 app.use("/api/interview", interviewRouter);
+
+app.use("/api/payment", paymentRouter);
 
 const PORT = process.env.PORT || 8000;
 

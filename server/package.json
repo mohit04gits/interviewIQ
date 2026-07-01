@@ -21,6 +21,7 @@
     "mongoose": "^8.24.1",
     "multer": "^2.2.0",
     "nodemon": "^3.1.14",
-    "pdfjs-dist": "^6.0.227"
+    "pdfjs-dist": "^6.0.227",
+    "razorpay": "^2.9.6"
   }
 }

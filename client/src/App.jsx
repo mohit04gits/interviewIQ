@@ -78,6 +78,7 @@ import InterviewPage from "./pages/InterviewPage";
 import InterviewReport from "./pages/InterviewReport";
 import InterviewHistory from "./components/ViewHistory";
 import Layout from "./layout/Layout";
+import Pricing from "./pages/Pricing";
 
 // ✅ Render URL update kiya
 export const serverUrl =
@@ -108,6 +109,7 @@ function App() {
         <Route path="/interview" element={<InterviewPage />} />
         <Route path="/interview-report" element={<InterviewReport />} />
         <Route path="/history" element={<InterviewHistory />} />
+        <Route path="/pricing" element={<Pricing />} />
       </Route>
     </Routes>
   );
