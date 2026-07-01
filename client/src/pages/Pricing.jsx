@@ -107,6 +107,7 @@ function Pricing() {
   const [loadingId, setLoadingId] = useState(null);
 
   const handleBuy = async (plan) => {
+    console.log("Razorpay Key:", import.meta.env.VITE_RAZORPAY_KEY_ID);
     if (!userData) {
       navigate("/");
       return;
