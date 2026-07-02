@@ -93,27 +93,41 @@ const useSpeechSynthesis = () => {
 
     if (!voices.length) return null;
 
+    // Female voices (priority order)
     const preferredVoices = [
-      "Microsoft David",
-      "Microsoft Mark",
-      "Microsoft Christopher",
-      "Microsoft Guy",
-      "Microsoft Roger",
-      "Microsoft Ryan",
-      "Microsoft Thomas",
-      "Microsoft William",
-      "Microsoft Liam",
-      "Google UK English Male",
-      "Google US English",
-      "Alex",
-      "Daniel",
+      "Microsoft Aria",
+      "Microsoft Jenny",
+      "Microsoft Zira",
+      "Google UK English Female",
+      "Samantha",
+      "Karen",
+      "Moira",
+      "Victoria",
+      "Tessa",
+      "Ava",
+      "Emma",
+      "Female",
     ];
 
+    // Find preferred female voice
     for (const name of preferredVoices) {
-      const voice = voices.find((v) => v.name.includes(name));
+      const voice = voices.find((v) =>
+        v.name.toLowerCase().includes(name.toLowerCase())
+      );
+
       if (voice) return voice;
     }
 
+    // Fallback female English voice
+    const femaleVoice = voices.find(
+      (v) =>
+        v.lang.startsWith("en") &&
+        /female|zira|aria|jenny|samantha|karen|emma|ava/i.test(v.name)
+    );
+
+    if (femaleVoice) return femaleVoice;
+
+    // Final fallback
     return (
       voices.find((v) => v.lang === "en-US") ||
       voices.find((v) => v.lang.startsWith("en")) ||

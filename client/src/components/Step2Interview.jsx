@@ -919,7 +919,7 @@ import React, { useState, useEffect } from "react";
 import { BsMicFill, BsMicMuteFill } from "react-icons/bs";
 import { HiMiniSignal } from "react-icons/hi2";
 import axios from "axios";
-import maleVideo from "../assets/videos/male-ai.mp4";
+import femaleVideo from "../assets/videos/female-ai.mp4";
 
 import Timer from "../components/Timer";
 import useSpeechSynthesis from "../hooks/useSpeechSynthesis.js";
@@ -1097,7 +1097,7 @@ function Step2Interview({ interviewData, onFinish }) {
           {/* AI Video */}
           <div className="overflow-hidden rounded-2xl shadow-md relative ring-1 ring-gray-100">
             <video
-              src={maleVideo}
+              src={femaleVideo}
               autoPlay={speaking}
               loop
               muted
