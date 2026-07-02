@@ -28,7 +28,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://interview-iq-fcsn.vercel.app"],
+    origin: ["http://localhost:5173", "https://interview-iq-ovv7.vercel.app/"],
     credentials: true,
   }),
 );
